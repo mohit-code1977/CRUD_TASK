@@ -19,3 +19,12 @@ CRUD operations, user authentication, session handling, and form validation usin
 - Apache (XAMPP)
 
 ##Project Structure
+
+
+## How to Run the Project
+1. Install **XAMPP**
+2. Clone the repository inside `htdocs`
+3. Start Apache & MySQL
+4. Import `database/schema.sql` into phpMyAdmin
+5. Update DB credentials in `config/db.php`
+6. Open browser:
