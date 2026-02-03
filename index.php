@@ -1,6 +1,6 @@
 <?php
-require("./db.php");
-
+echo "Hello";
+exit;
 $isEdit = false;
 $editId = null;
 

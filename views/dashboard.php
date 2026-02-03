@@ -1,31 +1,30 @@
 <?php
-require("./db.php");
+require_once __DIR__ . '/../auth/session.php';
+require_once __DIR__ . '/../config/db.php';
 
-session_start();
+// require("../config/db.php");
 
-if (!isset($_SESSION['email'])) {
-        header("Location:login.php");
-        exit();
-}
+// session_start();
+// if (!isset($_SESSION['email'])) {
+//         header("Location:login.php");
+//         exit();
+// }
 
-if($_SESSION['role'] !== "Student"){
-    header("Location:login.php");
-    exit();
-}
+// if($_SESSION['role'] !== "Student"){
+//     header("Location:login.php");
+//     exit();
+// }
+
+// if($_SERVER['REQUEST_METHOD'] ==="POST"){
+//     session_unset();
+//     session_destroy();
+//     header("Location:login.php");
+//     exit();
+// }
 
 
 $sql = "Select * from users where role='Student'";
-
 $result = $conn->query($sql);
-
-
-if($_SERVER['REQUEST_METHOD'] ==="POST"){
-    session_unset();
-    session_destroy();
-    header("Location:login.php");
-    exit();
-}
-
 
 ?>
 
@@ -62,9 +61,10 @@ if($_SERVER['REQUEST_METHOD'] ==="POST"){
 <body>
    <div class="heading">
     <h1>Welcome To Student dashboard</h1>
-    <form method="POST">
+    <!-- <form method="POST">
         <input type="submit" class="btn" name="logout" value="LogOut">
-    </form>
+    </form> -->
+    <a href="<?= BASE_URL ?>/auth/logout.php" class="btn">Logout</a>
    </div>
     <table>
        

@@ -1,5 +1,5 @@
 <?php
-require("./db.php");
+require("../config/db.php");
 
 $error = [];
 $name = $email = $mobile = $city = $role = "";
@@ -9,15 +9,6 @@ $unique_Email = [];
 session_start();
 $id = $_SESSION['id'];
 
-if (!isset($_SESSION['email'])) {
-        header("Location:login.php");
-        exit();
-}
-
-if($_SESSION['role'] !== "Admin"){
-    header("Location:login.php");
-    exit();
-}
 
 if($_SESSION['flag'] !== true){
     header("Location:login.php");
@@ -29,17 +20,6 @@ if(!isset($_SESSION['id'])){
     exit();
 }
 
-
-/*----------LogOut----------*/
-if (isset($_POST['logout'])) {
-    session_unset();
-    session_destroy();
-    header("Location:login.php");
-    exit();
-}
-
-
-// $id = $_SESSION['id'];
 $result = $conn->query("SELECT * FROM users WHERE id='$id'");
 if ($row = $result->fetch_assoc()) {
     $name = $row['name'];
@@ -89,8 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['Register'])) {
     if (empty($error)) {
 
         $f_Email = $conn->real_escape_string($email);
-        // var_dump($f_Email);
-        // exit();
         $f_Id    = (int)$id;
 
         $sql = "SELECT id FROM users WHERE email = '$f_Email' AND id != $f_Id LIMIT 1";
