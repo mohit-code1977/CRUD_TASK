@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../auth/admin_session.php'; 
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../config/config.php';
 
 $sql = "SELECT id, name, email, phone, city, role FROM users";
 $result = $conn->query($sql);
@@ -21,8 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     }
 
     if ($_POST['action'] === "Update") {
-        $_SESSION['id'] = $id;
-        header("Location: " . BASE_URL . "/views/update.php");
+        $_SESSION['update_id'] = $id;
+        
+        header("Location: " . BASE_URL . "/controllers/update.php");
         exit;
     }
 }

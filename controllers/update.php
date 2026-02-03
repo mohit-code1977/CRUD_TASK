@@ -1,22 +1,23 @@
 <?php
-require("../config/db.php");
-
+require_once __DIR__ . '/../auth/admin_session.php'; 
+require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../auth/logout.php';
 $error = [];
 $name = $email = $mobile = $city = $role = "";
 $isEdit = false;
 $unique_Email = [];
 
 session_start();
-$id = $_SESSION['id'];
+$id = $_SESSION['update_id'];
 
 
-if($_SESSION['flag'] !== true){
-    header("Location:login.php");
+if ($_SESSION['flag'] !== true) {
+        header("Location: " . BASE_URL . "/auth/login.php");
     exit();
 }
 
-if(!isset($_SESSION['id'])){
-    header("Location:admin_dashboard.php");
+if (!isset($_SESSION['update_id'])) {
+    header("Location: " . BASE_URL . "/auth/login.php");
     exit();
 }
 
@@ -91,13 +92,12 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['Register'])) {
         if ($conn->query($sql) === TRUE) {
             echo "<script>
         alert('Update Successfully!');
-        window.location.href='admin_dashboard.php';
       </script>";
             exit();
         } else {
             echo "Error: " . $conn->error;
         }
-        }
+    }
 }
 
 
@@ -121,7 +121,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['Register'])) {
             border-collapse: collapse;
             padding: 10px;
         }
-        button{
+
+        button {
             margin-top: 10px;
             margin-right: 10px;
             cursor: pointer;
@@ -161,9 +162,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['Register'])) {
             <div class="div">
                 <lable> Role : </lable>
                 <select name="role" id="">
-                   <option value="Admin" <?= $role=="Admin"?"selected":"" ?>>Admin</option>
-<option value="Student" <?= $role=="Student"?"selected":"" ?>>Student</option>
-
+                    <option value="Admin" <?= $role == "Admin" ? "selected" : "" ?>>Admin</option>
+                    <option value="Student" <?= $role == "Student" ? "selected" : "" ?>>Student</option>
                 </select>
             </div>
 

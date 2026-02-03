@@ -25,14 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
     if ($result->num_rows === 1) {
         $row = $result->fetch_assoc();
-        // print_r($row);
-        // exit();
          if ($password === $row['password']) {
             $_SESSION['name']  = $row['name'];
             $_SESSION['email'] = $row['email'];
             $_SESSION['role']  = $row['role'];
 
             if ($row['role'] == "Admin") {
+                // $_SESSION['flag'] = true;
                 header("Location: " . BASE_URL . "/views/admin_dashboard.php");
                 exit();
             } else {
