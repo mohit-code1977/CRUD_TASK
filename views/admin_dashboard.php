@@ -2,8 +2,9 @@
 require_once __DIR__ . '/../auth/admin_session.php'; 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/config.php';
+$sess_email = $_SESSION['email'];
 
-$sql = "SELECT id, name, email, phone, city, role FROM users";
+$sql = "SELECT id, name, email, phone, city, role FROM users where email != '$sess_email'";
 $result = $conn->query($sql);
 
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
@@ -13,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         exit;
     }
 
-    $id = (int) $_POST['id'];
+    $id = base64_decode($_POST['id']);
 
     if ($_POST['action'] === "Delete") {
         $conn->query("DELETE FROM users WHERE id = $id");
@@ -23,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
     if ($_POST['action'] === "Update") {
         $_SESSION['update_id'] = $id;
-        
         header("Location: " . BASE_URL . "/controllers/update.php");
         exit;
     }
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             <td><?= htmlspecialchars($row['role']) ?></td>
             <td>
                 <form method="post" style="display:inline;">
-                    <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                    <input type="hidden" name="id" value="<?= base64_encode($row['id']) ?>">
                     <input type="submit" class="btn" name="action" value="Update">
                     <input type="submit" class="btn" name="action" value="Delete"
                            onclick="return confirm('Are you sure you want to delete this user?');">

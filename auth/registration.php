@@ -1,8 +1,8 @@
 <?php
-require("../config/db.php");
+require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../config/config.php';
 
 session_start();
-$loginFlag = false;
 
 $error = [];
 $unique_Email = [];
@@ -63,27 +63,28 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         $checkEmail = "SELECT email FROM users WHERE email = '$email'";
         $res = $conn->query($checkEmail);
 
-
         if ($res && $res->num_rows > 0) {
             $error['email'] = "This email is already registered!";
         }else{
+
+        /*---------Password Hashing---------------*/
+        $hash_password = password_hash($psw, PASSWORD_DEFAULT);
+
             $sql = "INSERT INTO USERS (name, email, password, phone, city) VALUE 
-            ('$name', '$email', '$psw', '$mobile', '$city')";
+            ('$name', '$email', '$hash_password', '$mobile', '$city')";
 
             if($conn->query($sql)){
                 echo "
                 <script>alert('Data Inserted Successfully');</script>";
                 $_SESSION['name'] = $name;
                 $_SESSION['email'] = $email;
-                $_SESSION['password'] = $psw;
+                $_SESSION['password'] = $hash_password;
                 $_SESSION['role'] = "Student";
-                $loginFlag = true;
-                $_SESSION['flag'] = $loginFlag;
                 $name = $email = $psw = $mobile = $city = "";
-                header("Location:dashboard.php");
+                header("Location: " . BASE_URL . "/views/dashboard.php");
                 exit();
             }else{
-                echo "Insertion Failed : ". $conn->connect_errno;
+                echo "Insertion Failed : ". $conn->connect_error;
             }
         }
     }
@@ -116,7 +117,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         #page {
             height: 100vh;
             width: 100%;
-            /* padding: 20px; */
             text-align: center;
             display: flex;
             justify-content: center;
@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
         #mask, #mask_off{
             position: absolute; 
-            left: 823px;
+            left: 750px;
             opacity: 0.7;
         }
 

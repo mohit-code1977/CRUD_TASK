@@ -1,0 +1,52 @@
+/* ===== TABLE WRAPPER ===== */
+.table-wrapper {
+  max-height: 420px;          /* scroll after this */
+  overflow-y: auto;
+  border-radius: 14px;
+}
+
+/* ===== TABLE ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+/* header stays visible */
+th {
+  position: sticky;
+  top: 0;
+  background: #5a4fcf;
+  color: #fff;
+  z-index: 10;
+}
+
+/* rows */
+tr {
+  transition: background-color 0.15s ease;
+}
+
+tr:hover {
+  background-color: #ecebff;  /* NO transform */
+}
+
+/* zebra */
+tr:nth-child(even) {
+  background: #f6f6ff;
+}
+
+/* ===== ENTRY ANIMATION (SAFE) ===== */
+table {
+  animation: tableFade 0.4s ease-out;
+}
+
+@keyframes tableFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

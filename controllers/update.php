@@ -1,27 +1,26 @@
 <?php
-require_once __DIR__ . '/../auth/admin_session.php'; 
 require_once __DIR__ . '/../config/db.php';
-require_once __DIR__ . '/../auth/logout.php';
+require_once __DIR__ . '/../config/config.php';
+session_start();
+
+if(!isset($_SESSION['update_id'])){
+    header("Location:".BASE_URL. "/views/admin_dashboard.php");
+}
+
+// echo "update id : ". $_SESSION['update_id']. "<br/>";
+$id = $_SESSION['update_id'];
+// exit;
+
 $error = [];
 $name = $email = $mobile = $city = $role = "";
 $isEdit = false;
 $unique_Email = [];
 
-session_start();
-$id = $_SESSION['update_id'];
+$query = "SELECT * FROM users WHERE id= '$id'";
+// echo "SQL Query : $query";
+$result = $conn->query($query);
+// exit();
 
-
-if ($_SESSION['flag'] !== true) {
-        header("Location: " . BASE_URL . "/auth/login.php");
-    exit();
-}
-
-if (!isset($_SESSION['update_id'])) {
-    header("Location: " . BASE_URL . "/auth/login.php");
-    exit();
-}
-
-$result = $conn->query("SELECT * FROM users WHERE id='$id'");
 if ($row = $result->fetch_assoc()) {
     $name = $row['name'];
     $email = $row['email'];
@@ -65,12 +64,11 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['Register'])) {
         $error['city'] = "Invalid city name";
     }
 
-
     /* ---- Email Uniqueness Check ---- */
     if (empty($error)) {
 
         $f_Email = $conn->real_escape_string($email);
-        $f_Id    = (int)$id;
+        $f_Id    = $id;
 
         $sql = "SELECT id FROM users WHERE email = '$f_Email' AND id != $f_Id LIMIT 1";
 
@@ -80,8 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['Register'])) {
             $error['email'] = "This email is already registered!";
         }
     }
-
-
 
     /*------------Updation-------------*/
     if (empty($error)) {
@@ -93,17 +89,16 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['Register'])) {
             echo "<script>
         alert('Update Successfully!');
       </script>";
+      unset($_SESSION['update_id']);
+      header("Location:".BASE_URL."/views/admin_dashboard.php");
             exit();
         } else {
             echo "Error: " . $conn->error;
         }
     }
 }
-
-
-
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -168,11 +163,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['Register'])) {
             </div>
 
             <button type="submit" name="Register" class="btn">Update Now</button>
-            <button type="submit" name="logout" class="btn">LogOut Now </button>
         </form>
     </div>
     </div>
-
 </body>
 
 </html>

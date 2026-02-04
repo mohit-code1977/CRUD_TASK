@@ -10,31 +10,47 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     $email = trim($_POST['email'] ?? '');
     $password = trim($_POST['password'] ?? '');
 
+    /*------------Email Validation-------------*/
     if (empty($email)) {
-        $error['email'] = "Email is required ";
+        $error['email'] = "Email is required !";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error['email'] = "Invalid email address";
     }
 
+    /*-----------Password Validation-----------*/
     if (empty($password)) {
-        $error['psw'] = "Password is required";
+        $error['password'] = "Password is required !";
+    } elseif (
+        strlen($password) < 8 ||
+        !preg_match('/[A-Z]/', $password) ||
+        !preg_match('/[a-z]/', $password) ||
+        !preg_match('/[0-9]/', $password) ||
+        !preg_match('/[\W_]/', $password)
+    ) {
+        $error['password'] = "Min 8 chars with upper, lower, number & symbol";
     }
 
   /*----------Login Validation----------*/
    if (empty($error)) {
-    $sql = "SELECT name, email, password, role FROM users WHERE email = '$email'";
+    $sql = "SELECT id, name, email, password, role FROM users WHERE email = '$email'";
     $result = $conn->query($sql);
 
     if ($result->num_rows === 1) {
         $row = $result->fetch_assoc();
-         if ($password === $row['password']) {
+        $db_psw = $row['password'];
+         if (password_verify($password, $db_psw)) {
             $_SESSION['name']  = $row['name'];
             $_SESSION['email'] = $row['email'];
             $_SESSION['role']  = $row['role'];
+            $_SESSION['id'] = $row['id'];
 
-            if ($row['role'] == "Admin") {
-                // $_SESSION['flag'] = true;
+            if ($row['role'] === "Admin") {
+                $_SESSION['flag'] = true;
+                $email = $password = "";
                 header("Location: " . BASE_URL . "/views/admin_dashboard.php");
                 exit();
             } else {
+                $email = $password = "";
                 header("Location: " . BASE_URL . "/views/dashboard.php");
                 exit();
             }
@@ -98,10 +114,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         <p style="color: red;"><?= $error['psw'] ?? "" ?></p>
 
         <button name="login">Login</button>
-        <button name="sign_up"><a href="<?= BASE_URL ?>/auth/registration.php">Register</a>
-        </button>
-
     </form>
+    <button name="sign_up"><a href="<?= BASE_URL ?>/auth/registration.php">Register</a>
+        </button>
     <script src="<?= BASE_URL ?>/auth/script.js"></script>
 </body>
 
